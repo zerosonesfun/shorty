@@ -1,0 +1,140 @@
+# Chinese (Simplified) translation for Shorty plugin
+# Copyright (C) 2024 Billy Wilcosky
+# This file is distributed under the same license as the Shorty package.
+msgid ""
+msgstr ""
+"Project-Id-Version: Shorty 1.0\n"
+"Report-Msgid-Bugs-To: https://wilcosky.com\n"
+"POT-Creation-Date: 2024-01-01 00:00+0000\n"
+"PO-Revision-Date: 2024-01-01 00:00+0000\n"
+"Last-Translator: Billy Wilcosky <billy@wilcosky.com>\n"
+"Language-Team: Chinese (Simplified)\n"
+"Language: zh_CN\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=1; plural=0;\n"
+
+#: includes/admin.php:15
+msgid "Shorty Settings"
+msgstr "Shorty 设置"
+
+#: includes/admin.php:16
+msgid "Shorty"
+msgstr "Shorty"
+
+#: includes/admin.php:47
+msgid "Shortcuts saved successfully!"
+msgstr "快捷键保存成功！"
+
+#: includes/admin.php:58
+msgid "Ctrl + Shift"
+msgstr "Ctrl + Shift"
+
+#: includes/admin.php:59
+msgid "Alt + Shift"
+msgstr "Alt + Shift"
+
+#: includes/admin.php:60
+msgid "Ctrl + Alt"
+msgstr "Ctrl + Alt"
+
+#: includes/admin.php:61
+msgid "Ctrl + Meta (Cmd on Mac)"
+msgstr "Ctrl + Meta (Mac 上为 Cmd)"
+
+#: includes/admin.php:62
+msgid "Alt + Meta (Cmd on Mac)"
+msgstr "Alt + Meta (Mac 上为 Cmd)"
+
+#: includes/admin.php:63
+msgid "Shift + Meta (Cmd on Mac)"
+msgstr "Shift + Meta (Mac 上为 Cmd)"
+
+#: includes/admin.php:64
+msgid "Ctrl + Shift + Alt"
+msgstr "Ctrl + Shift + Alt"
+
+#: includes/admin.php:69
+msgid "Modifier Keys"
+msgstr "修饰键"
+
+#: includes/admin.php:74
+msgid "Choose which modifier keys must be pressed along with the shortcut key."
+msgstr "选择必须与快捷键一起按下的修饰键。"
+
+#: includes/admin.php:78
+msgid "Custom Modal Text"
+msgstr "自定义模态框文本"
+
+#: includes/admin.php:81
+msgid "Optional custom text to display in the shortcuts modal. You can use HTML tags like &lt;strong&gt;, &lt;em&gt;, &lt;br&gt;, etc. Leave empty to show only the shortcuts list."
+msgstr "在快捷键模态框中显示的可选自定义文本。您可以使用 HTML 标签，如 &lt;strong&gt;、&lt;em&gt;、&lt;br&gt; 等。留空则仅显示快捷键列表。"
+
+#: includes/admin.php:85
+msgid "Shortcuts"
+msgstr "快捷键"
+
+#: includes/admin.php:87
+msgid "Add keyboard keys and associated URLs below. Use the modifier combination selected above + the key to trigger shortcuts."
+msgstr "在下方添加键盘按键和关联的 URL。使用上面选择的修饰键组合 + 按键来触发快捷键。"
+
+#: includes/admin.php:88
+msgid "Tip:"
+msgstr "提示："
+
+#: includes/admin.php:88
+msgid "Users can press Ctrl+/ (or Cmd+/ on Mac) to see all available shortcuts in a modal window."
+msgstr "用户可以按 Ctrl+/（Mac 上为 Cmd+/）在模态窗口中查看所有可用的快捷键。"
+
+#: includes/admin.php:92
+msgid "Key"
+msgstr "按键"
+
+#: includes/admin.php:93
+msgid "URL"
+msgstr "URL"
+
+#: includes/admin.php:94
+msgid "Remove"
+msgstr "删除"
+
+#: includes/admin.php:97
+msgid "Add +"
+msgstr "添加 +"
+
+#: includes/admin.php:102
+msgid "Save Changes"
+msgstr "保存更改"
+
+#: includes/enqueue.php:39
+msgid "Keyboard Shortcuts"
+msgstr "键盘快捷键"
+
+#: includes/enqueue.php:40
+msgid "Press"
+msgstr "按"
+
+#: includes/enqueue.php:41
+msgid "to navigate to the following URLs:"
+msgstr "导航到以下 URL："
+
+#: includes/enqueue.php:42
+msgid "No keyboard shortcuts have been configured yet."
+msgstr "尚未配置任何键盘快捷键。"
+
+#: includes/enqueue.php:43
+msgid "Close"
+msgstr "关闭"
+
+#: includes/enqueue.php:48
+msgid "Ctrl + Cmd"
+msgstr "Ctrl + Cmd"
+
+#: includes/enqueue.php:50
+msgid "Alt + Cmd"
+msgstr "Alt + Cmd"
+
+#: includes/enqueue.php:52
+msgid "Shift + Cmd"
+msgstr "Shift + Cmd"

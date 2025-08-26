@@ -1,0 +1,140 @@
+# Japanese translation for Shorty plugin
+# Copyright (C) 2024 Billy Wilcosky
+# This file is distributed under the same license as the Shorty package.
+msgid ""
+msgstr ""
+"Project-Id-Version: Shorty 1.0\n"
+"Report-Msgid-Bugs-To: https://wilcosky.com\n"
+"POT-Creation-Date: 2024-01-01 00:00+0000\n"
+"PO-Revision-Date: 2024-01-01 00:00+0000\n"
+"Last-Translator: Billy Wilcosky <billy@wilcosky.com>\n"
+"Language-Team: Japanese\n"
+"Language: ja\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=1; plural=0;\n"
+
+#: includes/admin.php:15
+msgid "Shorty Settings"
+msgstr "Shorty 設定"
+
+#: includes/admin.php:16
+msgid "Shorty"
+msgstr "Shorty"
+
+#: includes/admin.php:47
+msgid "Shortcuts saved successfully!"
+msgstr "ショートカットが正常に保存されました！"
+
+#: includes/admin.php:58
+msgid "Ctrl + Shift"
+msgstr "Ctrl + Shift"
+
+#: includes/admin.php:59
+msgid "Alt + Shift"
+msgstr "Alt + Shift"
+
+#: includes/admin.php:60
+msgid "Ctrl + Alt"
+msgstr "Ctrl + Alt"
+
+#: includes/admin.php:61
+msgid "Ctrl + Meta (Cmd on Mac)"
+msgstr "Ctrl + Meta (Mac では Cmd)"
+
+#: includes/admin.php:62
+msgid "Alt + Meta (Cmd on Mac)"
+msgstr "Alt + Meta (Mac では Cmd)"
+
+#: includes/admin.php:63
+msgid "Shift + Meta (Cmd on Mac)"
+msgstr "Shift + Meta (Mac では Cmd)"
+
+#: includes/admin.php:64
+msgid "Ctrl + Shift + Alt"
+msgstr "Ctrl + Shift + Alt"
+
+#: includes/admin.php:69
+msgid "Modifier Keys"
+msgstr "修飾キー"
+
+#: includes/admin.php:74
+msgid "Choose which modifier keys must be pressed along with the shortcut key."
+msgstr "ショートカットキーと一緒に押す必要がある修飾キーを選択してください。"
+
+#: includes/admin.php:78
+msgid "Custom Modal Text"
+msgstr "カスタムモーダルテキスト"
+
+#: includes/admin.php:81
+msgid "Optional custom text to display in the shortcuts modal. You can use HTML tags like &lt;strong&gt;, &lt;em&gt;, &lt;br&gt;, etc. Leave empty to show only the shortcuts list."
+msgstr "ショートカットモーダルに表示するオプションのカスタムテキスト。&lt;strong&gt;、&lt;em&gt;、&lt;br&gt; などの HTML タグを使用できます。空のままにすると、ショートカットリストのみが表示されます。"
+
+#: includes/admin.php:85
+msgid "Shortcuts"
+msgstr "ショートカット"
+
+#: includes/admin.php:87
+msgid "Add keyboard keys and associated URLs below. Use the modifier combination selected above + the key to trigger shortcuts."
+msgstr "下にキーボードキーと関連する URL を追加してください。上で選択した修飾キーの組み合わせ + キーを使用してショートカットをトリガーします。"
+
+#: includes/admin.php:88
+msgid "Tip:"
+msgstr "ヒント："
+
+#: includes/admin.php:88
+msgid "Users can press Ctrl+/ (or Cmd+/ on Mac) to see all available shortcuts in a modal window."
+msgstr "ユーザーは Ctrl+/（Mac では Cmd+/）を押すことで、モーダルウィンドウで利用可能なすべてのショートカットを確認できます。"
+
+#: includes/admin.php:92
+msgid "Key"
+msgstr "キー"
+
+#: includes/admin.php:93
+msgid "URL"
+msgstr "URL"
+
+#: includes/admin.php:94
+msgid "Remove"
+msgstr "削除"
+
+#: includes/admin.php:97
+msgid "Add +"
+msgstr "追加 +"
+
+#: includes/admin.php:102
+msgid "Save Changes"
+msgstr "変更を保存"
+
+#: includes/enqueue.php:39
+msgid "Keyboard Shortcuts"
+msgstr "キーボードショートカット"
+
+#: includes/enqueue.php:40
+msgid "Press"
+msgstr "押す"
+
+#: includes/enqueue.php:41
+msgid "to navigate to the following URLs:"
+msgstr "以下の URL に移動するには："
+
+#: includes/enqueue.php:42
+msgid "No keyboard shortcuts have been configured yet."
+msgstr "まだキーボードショートカットが設定されていません。"
+
+#: includes/enqueue.php:43
+msgid "Close"
+msgstr "閉じる"
+
+#: includes/enqueue.php:48
+msgid "Ctrl + Cmd"
+msgstr "Ctrl + Cmd"
+
+#: includes/enqueue.php:50
+msgid "Alt + Cmd"
+msgstr "Alt + Cmd"
+
+#: includes/enqueue.php:52
+msgid "Shift + Cmd"
+msgstr "Shift + Cmd"
