@@ -163,6 +163,9 @@ GNU General Public License for more details.
 
 ## 🎉 Changelog
 
+### Version 1.1.1
+- Compatibility checks with WordPress 6.9
+
 ### Version 1.0
 - Initial release
 - Custom keyboard shortcuts functionality
