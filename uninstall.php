@@ -16,5 +16,5 @@ delete_option( 'wilcosky_shorty_shortcuts' );
 delete_option( 'wilcosky_shorty_modifier' );
 delete_option( 'wilcosky_shorty_modal_text' );
 
-// Clean up any transients that might have been set
+// Clean up legacy success transient (per-user notice keys expire within seconds)
 delete_transient( 'wilcosky_shorty_success_message' );

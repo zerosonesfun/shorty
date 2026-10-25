@@ -15,35 +15,55 @@ if ( ! defined( 'ABSPATH' ) ) {
  */
 function wilcosky_shorty_enqueue_script() {
     $script_path = plugin_dir_path( __FILE__ ) . 'js/shorty.js';
-    
-    // Check if file exists before getting modification time
+
     if ( ! file_exists( $script_path ) ) {
         return;
     }
-    
-    $file_version = filemtime( $script_path ); // Get the last modified timestamp of the JS file
 
-    // Enqueue script for frontend
-    wp_enqueue_script( 'wilcosky-shorty-js', plugin_dir_url( __FILE__ ) . 'js/shorty.js', [], $file_version, true );
+    // WordPress appends this as ?ver=… so browsers/CDNs fetch a fresh copy after file changes
+    $file_version = (string) filemtime( $script_path );
 
-    // Enqueue script for backend (admin area)
-    if ( is_admin() ) {
-        wp_enqueue_script( 'wilcosky-shorty-admin-js', plugin_dir_url( __FILE__ ) . 'js/shorty.js', [], $file_version, true );
-    }
+    // Enqueue once for both frontend and admin (same handle keeps localized data attached)
+    wp_enqueue_script(
+        'wilcosky-shorty-js',
+        plugin_dir_url( __FILE__ ) . 'js/shorty.js',
+        [],
+        $file_version,
+        true
+    );
 
     // Localize the script to pass the shortcuts to JS
-    $shortcuts = get_option( 'wilcosky_shorty_shortcuts', [] ); // Retrieve saved shortcuts from the database
+    $shortcuts = wilcosky_shorty_get_shortcuts();
     $formatted_shortcuts = [];
-    
-    foreach ($shortcuts as $index => $shortcut) {
-        $formatted_shortcuts[$shortcut['key']] = esc_url( $shortcut['url'] ); // Format key-value pairs
+
+    foreach ( $shortcuts as $shortcut ) {
+        if ( empty( $shortcut['key'] ) || empty( $shortcut['url'] ) ) {
+            continue;
+        }
+        // Re-sanitize at output time in case older/invalid data is still stored
+        $pair = wilcosky_shorty_sanitize_shortcut( $shortcut['key'], $shortcut['url'] );
+        if ( null === $pair ) {
+            continue;
+        }
+        $url = esc_url( $pair['url'] );
+        if ( '' === $url ) {
+            continue;
+        }
+        $formatted_shortcuts[ $pair['key'] ] = $url;
     }
 
-    // Get the selected modifier combination
+    // Get the selected modifier combination (fall back if stored value is invalid)
     $modifier = get_option( 'wilcosky_shorty_modifier', 'ctrl_shift' );
+    $allowed_modifiers = [ 'ctrl_shift', 'alt_shift', 'ctrl_alt', 'ctrl_meta', 'alt_meta', 'shift_meta', 'ctrl_shift_alt' ];
+    if ( ! is_string( $modifier ) || ! in_array( $modifier, $allowed_modifiers, true ) ) {
+        $modifier = 'ctrl_shift';
+    }
 
     // Get the custom modal text
     $modal_text = get_option( 'wilcosky_shorty_modal_text', '' );
+    if ( ! is_string( $modal_text ) ) {
+        $modal_text = '';
+    }
 
     // Localize strings for JavaScript
     $strings = [
@@ -72,10 +92,19 @@ function wilcosky_shorty_enqueue_script() {
         'ctrlShiftOption' => __( 'Ctrl + Shift + Option', 'shorty' ),
     ];
 
-    wp_localize_script( 'wilcosky-shorty-js', 'shortyShortcuts', $formatted_shortcuts );
-    wp_localize_script( 'wilcosky-shorty-js', 'shortyModifier', $modifier );
-    wp_localize_script( 'wilcosky-shorty-js', 'shortyModalText', $modal_text );
-    wp_localize_script( 'wilcosky-shorty-js', 'shortyStrings', $strings );
+    // wp_localize_script only accepts arrays — scalars become {"0":"value"} and break JS.
+    // Pass everything as one object so modifier/modalText stay real strings.
+    wp_localize_script(
+        'wilcosky-shorty-js',
+        'shortyData',
+        [
+            'shortcuts' => $formatted_shortcuts,
+            'modifier'  => $modifier,
+            'modalText' => $modal_text,
+            'strings'   => $strings,
+        ]
+    );
+
 }
 add_action( 'wp_enqueue_scripts', 'wilcosky_shorty_enqueue_script' );
 add_action( 'admin_enqueue_scripts', 'wilcosky_shorty_enqueue_script' );

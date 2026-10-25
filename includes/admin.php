@@ -4,10 +4,19 @@ if ( ! defined( 'ABSPATH' ) ) {
     exit;
 }
 
-// Plugin constants
-define( 'WILCOSKY_SHORTY_VERSION', '1.1' );
-define( 'WILCOSKY_SHORTY_PLUGIN_URL', plugin_dir_url( __FILE__ ) );
-define( 'WILCOSKY_SHORTY_PLUGIN_PATH', plugin_dir_path( __FILE__ ) );
+// Plugin constants (paths relative to main plugin file)
+if ( ! defined( 'WILCOSKY_SHORTY_VERSION' ) ) {
+    define( 'WILCOSKY_SHORTY_VERSION', '1.1.2' );
+}
+if ( ! defined( 'WILCOSKY_SHORTY_PLUGIN_FILE' ) ) {
+    define( 'WILCOSKY_SHORTY_PLUGIN_FILE', dirname( __DIR__ ) . '/shorty.php' );
+}
+if ( ! defined( 'WILCOSKY_SHORTY_PLUGIN_URL' ) ) {
+    define( 'WILCOSKY_SHORTY_PLUGIN_URL', plugin_dir_url( WILCOSKY_SHORTY_PLUGIN_FILE ) );
+}
+if ( ! defined( 'WILCOSKY_SHORTY_PLUGIN_PATH' ) ) {
+    define( 'WILCOSKY_SHORTY_PLUGIN_PATH', plugin_dir_path( WILCOSKY_SHORTY_PLUGIN_FILE ) );
+}
 
 /**
  * Add settings page to WordPress admin menu.
@@ -40,42 +49,33 @@ function wilcosky_shorty_settings_page_html() {
     // Check if form is submitted and save the shortcuts
     if ( isset( $_POST['wilcosky_shorty_save'] ) ) {
         // Verify nonce for security
-        if ( ! isset( $_POST['wilcosky_shorty_nonce'] ) || ! wp_verify_nonce( $_POST['wilcosky_shorty_nonce'], 'wilcosky_shorty_save' ) ) {
-            wp_die( __( 'Security check failed. Please try again.', 'shorty' ) );
+        $nonce = isset( $_POST['wilcosky_shorty_nonce'] ) ? sanitize_text_field( wp_unslash( $_POST['wilcosky_shorty_nonce'] ) ) : '';
+        if ( ! wp_verify_nonce( $nonce, 'wilcosky_shorty_save' ) ) {
+            wp_die( esc_html__( 'Security check failed. Please try again.', 'shorty' ) );
         }
 
-        // Save the shortcuts
-        $shortcuts = [];
-        
-        // Validate that the shortcuts array exists and has the expected structure
-        if ( ! isset( $_POST['wilcosky_shorty_shortcuts'] ) || ! is_array( $_POST['wilcosky_shorty_shortcuts'] ) ) {
-            return;
-        }
-        
-        if ( ! isset( $_POST['wilcosky_shorty_shortcuts']['key'] ) || ! isset( $_POST['wilcosky_shorty_shortcuts']['url'] ) ) {
-            return;
-        }
-        
-        $count = count( $_POST['wilcosky_shorty_shortcuts']['key'] );
+        // Save shortcuts (missing/empty POST = clear all — e.g. user removed every row)
+        $rows   = [];
+        $posted = isset( $_POST['wilcosky_shorty_shortcuts'] ) && is_array( $_POST['wilcosky_shorty_shortcuts'] )
+            ? wp_unslash( $_POST['wilcosky_shorty_shortcuts'] ) // phpcs:ignore WordPress.Security.ValidatedSanitizedInput.InputNotSanitized -- sanitized via wilcosky_shorty_sanitize_shortcut()
+            : [];
+
+        $keys = ( isset( $posted['key'] ) && is_array( $posted['key'] ) ) ? $posted['key'] : [];
+        $urls = ( isset( $posted['url'] ) && is_array( $posted['url'] ) ) ? $posted['url'] : [];
+        $count = min( count( $keys ), count( $urls ) );
+
         for ( $i = 0; $i < $count; $i++ ) {
-            $key = sanitize_text_field( $_POST['wilcosky_shorty_shortcuts']['key'][$i] );
-            $url = sanitize_text_field( $_POST['wilcosky_shorty_shortcuts']['url'][$i] );
-            
-            // Validate URL
-            if ( ! empty( $key ) && ! empty( $url ) ) {
-                // Check if URL is valid (allows relative URLs and full URLs)
-                $parsed_url = parse_url( $url );
-                if ( $parsed_url !== false && ( isset( $parsed_url['scheme'] ) || isset( $parsed_url['path'] ) ) ) {
-                    $shortcuts[] = [ 'key' => $key, 'url' => $url ];
-                }
-            }
+            $rows[] = [
+                'key' => $keys[ $i ],
+                'url' => $urls[ $i ],
+            ];
         }
-        update_option( 'wilcosky_shorty_shortcuts', $shortcuts );
+        update_option( 'wilcosky_shorty_shortcuts', wilcosky_shorty_sanitize_shortcuts_list( $rows ) );
 
         // Save the modifier combination
         if ( isset( $_POST['wilcosky_shorty_modifier'] ) ) {
-            $modifier = sanitize_text_field( $_POST['wilcosky_shorty_modifier'] );
-            $allowed_modifiers = ['ctrl_shift', 'alt_shift', 'ctrl_alt', 'ctrl_meta', 'alt_meta', 'shift_meta', 'ctrl_shift_alt'];
+            $modifier = sanitize_text_field( wp_unslash( $_POST['wilcosky_shorty_modifier'] ) );
+            $allowed_modifiers = [ 'ctrl_shift', 'alt_shift', 'ctrl_alt', 'ctrl_meta', 'alt_meta', 'shift_meta', 'ctrl_shift_alt' ];
             if ( in_array( $modifier, $allowed_modifiers, true ) ) {
                 update_option( 'wilcosky_shorty_modifier', $modifier );
             }
@@ -83,21 +83,26 @@ function wilcosky_shorty_settings_page_html() {
 
         // Save the custom modal text
         if ( isset( $_POST['wilcosky_shorty_modal_text'] ) ) {
-            $modal_text = wp_kses_post( $_POST['wilcosky_shorty_modal_text'] );
+            $modal_text = wp_kses_post( wp_unslash( $_POST['wilcosky_shorty_modal_text'] ) );
             update_option( 'wilcosky_shorty_modal_text', $modal_text );
         }
 
-        // Set a transient to show the success message
-        set_transient( 'wilcosky_shorty_success_message', __( 'Shortcuts saved successfully!', 'shorty' ), 5 );
+        // Per-user transient so concurrent admins don't see each other's notices
+        set_transient(
+            'wilcosky_shorty_success_message_' . get_current_user_id(),
+            __( 'Shortcuts saved successfully!', 'shorty' ),
+            5
+        );
     }
 
     // Check for the success message transient and display it
-    if ( $message = get_transient( 'wilcosky_shorty_success_message' ) ) {
+    $success_key = 'wilcosky_shorty_success_message_' . get_current_user_id();
+    if ( $message = get_transient( $success_key ) ) {
         echo '<div class="updated notice is-dismissible"><p>' . esc_html( $message ) . '</p></div>';
-        delete_transient( 'wilcosky_shorty_success_message' );
+        delete_transient( $success_key );
     }
 
-    $shortcuts = get_option( 'wilcosky_shorty_shortcuts', [] );
+    $shortcuts = wilcosky_shorty_get_shortcuts();
     $current_modifier = get_option( 'wilcosky_shorty_modifier', 'ctrl_shift' );
     $modal_text = get_option( 'wilcosky_shorty_modal_text', '' );
     
@@ -147,8 +152,8 @@ function wilcosky_shorty_settings_page_html() {
                         <div id="shortcuts-container">
                             <?php foreach ( $shortcuts as $index => $shortcut ) : ?>
                                 <div class="shortcut-row" data-index="<?php echo esc_attr( $index ); ?>">
-                                    <input type="text" name="wilcosky_shorty_shortcuts[key][]" value="<?php echo esc_attr( $shortcut['key'] ); ?>" placeholder="<?php esc_attr_e( 'Key', 'shorty' ); ?>">
-                                    <input type="text" name="wilcosky_shorty_shortcuts[url][]" value="<?php echo esc_attr( $shortcut['url'] ); ?>" placeholder="<?php esc_attr_e( 'URL', 'shorty' ); ?>">
+                                    <input type="text" name="wilcosky_shorty_shortcuts[key][]" value="<?php echo esc_attr( $shortcut['key'] ); ?>" maxlength="1" size="3" placeholder="<?php esc_attr_e( 'Key', 'shorty' ); ?>">
+                                    <input type="text" name="wilcosky_shorty_shortcuts[url][]" value="<?php echo esc_attr( $shortcut['url'] ); ?>" class="regular-text" placeholder="<?php esc_attr_e( 'URL', 'shorty' ); ?>">
                                     <button type="button" class="remove-row button"><?php esc_html_e( 'Remove', 'shorty' ); ?></button>
                                 </div>
                             <?php endforeach; ?>

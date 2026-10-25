@@ -3,7 +3,7 @@
  * Plugin Name: Shorty
  * Plugin URI: https://wilcosky.com/shorty
  * Description: A plugin to handle keyboard shortcuts for quick URL redirection.
- * Version: 1.1.1
+ * Version: 1.1.2
  * Requires at least: 5.0
  * Tested up to: 6.9
  * Requires PHP: 7.4
@@ -16,7 +16,7 @@
  * Network: false
  *
  * @package Shorty
- * @version 1.1.1
+ * @version 1.1.2
  * @author Billy Wilcosky
  * @license GPL v2 or later
  */
@@ -32,7 +32,7 @@ function wilcosky_shorty_load_textdomain() {
 }
 add_action( 'plugins_loaded', 'wilcosky_shorty_load_textdomain' );
 
-// Include necessary files
+// Include necessary files (shortcuts helpers before admin/enqueue)
+require_once plugin_dir_path( __FILE__ ) . 'includes/shortcuts.php';
 require_once plugin_dir_path( __FILE__ ) . 'includes/admin.php';
 require_once plugin_dir_path( __FILE__ ) . 'includes/enqueue.php';
-require_once plugin_dir_path( __FILE__ ) . 'includes/shortcuts.php';

@@ -4,7 +4,7 @@ Tags: keyboard, shortcuts, navigation, productivity, accessibility
 Requires at least: 5.0
 Tested up to: 6.9
 Requires PHP: 7.4
-Stable tag: 1.1.1
+Stable tag: 1.1.2
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
@@ -138,6 +138,14 @@ Simply deactivate and delete the plugin through the WordPress admin. The plugin 
 4. Admin interface with multiple shortcuts configured
 
 == Changelog ==
+
+= 1.1.2 =
+* Fix shortcuts not navigating on Mac — modifier/modal text were passed incorrectly via wp_localize_script, which crashed shortcut handling after the help modal path
+* Fix inability to clear all shortcuts on save
+* Fix Escape key listener leak when reopening the help modal
+* Harden URL validation (http/https and relative paths only); shared sanitize helpers
+* Match shortcuts via event.code so Shift/Option don't break digit/symbol keys
+* Fix plugin path constants, per-user save notices, and admin key input constraints
 
 = 1.1.1 =
 * Compatibility checks with WordPress 6.9
