@@ -116,6 +116,81 @@
     }
 
     /**
+     * Whether a CSS color value is fully transparent.
+     *
+     * @param {string} value
+     * @returns {boolean}
+     */
+    function isTransparentColor(value) {
+        if (!value || value === 'transparent') {
+            return true;
+        }
+
+        // Comma syntax: rgba(0, 0, 0, 0)
+        const comma = value.match(/rgba?\(\s*[\d.]+%?\s*,\s*[\d.]+%?\s*,\s*[\d.]+%?(?:\s*,\s*([\d.]+%?))?\s*\)/i);
+        if (comma) {
+            return comma[1] !== undefined && parseFloat(comma[1]) === 0;
+        }
+
+        // Space syntax: rgb(0 0 0 / 0)
+        const slash = value.match(/rgba?\([^)]*?\/\s*([\d.]+%?)\s*\)/i);
+        if (slash) {
+            return parseFloat(slash[1]) === 0;
+        }
+
+        return false;
+    }
+
+    /**
+     * Sample the page's current surface and text colors (respects light/dark themes).
+     *
+     * @returns {{bg: string, fg: string, font: string}}
+     */
+    function resolveThemeColors() {
+        const body = document.body;
+        const root = document.documentElement;
+        const bodyStyles = body ? getComputedStyle(body) : null;
+        const rootStyles = getComputedStyle(root);
+
+        let fg = (bodyStyles && bodyStyles.color) || rootStyles.color || '';
+        let font = (bodyStyles && bodyStyles.fontFamily) || rootStyles.fontFamily || 'inherit';
+        let bg = '';
+
+        let node = body;
+        while (node && node !== root.parentElement) {
+            const styles = getComputedStyle(node);
+            if (!isTransparentColor(styles.backgroundColor)) {
+                bg = styles.backgroundColor;
+                break;
+            }
+            node = node.parentElement;
+        }
+
+        if (!bg || isTransparentColor(bg) || !fg) {
+            const probe = document.createElement('div');
+            probe.style.cssText = 'position:absolute;left:-9999px;color:CanvasText;background-color:Canvas;';
+            (body || root).appendChild(probe);
+            const probeStyles = getComputedStyle(probe);
+            if (!bg || isTransparentColor(bg)) {
+                bg = probeStyles.backgroundColor;
+            }
+            if (!fg) {
+                fg = probeStyles.color;
+            }
+            probe.remove();
+        }
+
+        if (!bg || isTransparentColor(bg)) {
+            bg = '#fff';
+        }
+        if (!fg) {
+            fg = '#111';
+        }
+
+        return { bg: bg, fg: fg, font: font };
+    }
+
+    /**
      * Ensure modal CSS is present once.
      */
     function ensureModalStyles() {
@@ -132,7 +207,7 @@
                 left: 0;
                 width: 100%;
                 height: 100%;
-                background-color: rgba(0, 0, 0, 0.5);
+                background: color-mix(in srgb, var(--shorty-fg, #111) 45%, transparent);
                 display: flex;
                 justify-content: center;
                 align-items: center;
@@ -140,9 +215,11 @@
             }
 
             .shorty-modal-content {
-                background: white;
+                background: var(--shorty-bg, #fff);
+                color: var(--shorty-fg, #111);
+                font-family: var(--shorty-font, inherit);
                 border-radius: 0;
-                box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
+                box-shadow: 0 4px 20px color-mix(in srgb, var(--shorty-fg, #111) 30%, transparent);
                 max-width: 600px;
                 width: 90%;
                 max-height: 80vh;
@@ -154,17 +231,19 @@
                 justify-content: space-between;
                 align-items: center;
                 padding: 20px;
-                border-bottom: 1px solid #ddd;
+                border-bottom: 1px solid color-mix(in srgb, var(--shorty-fg, #111) 18%, transparent);
             }
 
             .shorty-modal-header h2 {
                 margin: 0;
                 font-size: 1.5em;
+                color: inherit;
             }
 
             .shorty-modal-close {
                 background: none;
                 border: none;
+                color: inherit;
                 font-size: 24px;
                 cursor: pointer;
                 padding: 0;
@@ -176,7 +255,7 @@
             }
 
             .shorty-modal-close:hover {
-                background-color: #f0f0f0;
+                background: color-mix(in srgb, var(--shorty-fg, #111) 10%, transparent);
             }
 
             .shorty-modal-body {
@@ -188,7 +267,7 @@
             .shorty-custom-text {
                 margin-bottom: 20px;
                 padding-bottom: 15px;
-                border-bottom: 1px solid #eee;
+                border-bottom: 1px solid color-mix(in srgb, var(--shorty-fg, #111) 18%, transparent);
             }
 
             .shorty-custom-text p:last-child {
@@ -204,7 +283,7 @@
                 justify-content: space-between;
                 align-items: center;
                 padding: 10px 0;
-                border-bottom: 1px solid #eee;
+                border-bottom: 1px solid color-mix(in srgb, var(--shorty-fg, #111) 18%, transparent);
             }
 
             .shorty-shortcut-item:last-child {
@@ -213,7 +292,8 @@
 
             .shorty-shortcut-key {
                 font-family: monospace;
-                background-color: #f5f5f5;
+                background: color-mix(in srgb, var(--shorty-fg, #111) 8%, var(--shorty-bg, #fff));
+                color: var(--shorty-fg, #111);
                 padding: 4px 8px;
                 border-radius: 0;
                 font-weight: bold;
@@ -221,7 +301,7 @@
             }
 
             .shorty-shortcut-url {
-                color: #666;
+                color: color-mix(in srgb, var(--shorty-fg, #111) 65%, var(--shorty-bg, #fff));
                 word-break: break-all;
                 margin-left: 15px;
             }
@@ -260,6 +340,11 @@
         modalOverlay.setAttribute('role', 'dialog');
         modalOverlay.setAttribute('aria-modal', 'true');
         modalOverlay.setAttribute('aria-labelledby', 'shorty-modal-title');
+
+        const theme = resolveThemeColors();
+        modalOverlay.style.setProperty('--shorty-bg', theme.bg);
+        modalOverlay.style.setProperty('--shorty-fg', theme.fg);
+        modalOverlay.style.setProperty('--shorty-font', theme.font);
 
         const modalContent = document.createElement('div');
         modalContent.className = 'shorty-modal-content';

@@ -6,7 +6,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 
 // Plugin constants (paths relative to main plugin file)
 if ( ! defined( 'WILCOSKY_SHORTY_VERSION' ) ) {
-    define( 'WILCOSKY_SHORTY_VERSION', '1.1.2' );
+    define( 'WILCOSKY_SHORTY_VERSION', '1.1.3' );
 }
 if ( ! defined( 'WILCOSKY_SHORTY_PLUGIN_FILE' ) ) {
     define( 'WILCOSKY_SHORTY_PLUGIN_FILE', dirname( __DIR__ ) . '/shorty.php' );

@@ -4,7 +4,7 @@ Tags: keyboard, shortcuts, navigation, productivity, accessibility
 Requires at least: 5.0
 Tested up to: 6.9
 Requires PHP: 7.4
-Stable tag: 1.1.2
+Stable tag: 1.1.3
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
@@ -138,6 +138,9 @@ Simply deactivate and delete the plugin through the WordPress admin. The plugin 
 4. Admin interface with multiple shortcuts configured
 
 == Changelog ==
+
+= 1.1.3 =
+* Shortcuts modal now adapts to the site's current background and text colors (including light/dark modes)
 
 = 1.1.2 =
 * Fix shortcuts not navigating on Mac — modifier/modal text were passed incorrectly via wp_localize_script, which crashed shortcut handling after the help modal path

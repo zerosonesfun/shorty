@@ -3,7 +3,7 @@
 A powerful WordPress plugin that allows site administrators to create custom keyboard shortcuts for quick navigation to any URL on their website.
 
 ![Shorty Plugin](https://img.shields.io/badge/WordPress-Plugin-blue.svg)
-![Version](https://img.shields.io/badge/Version-1.1.2-green.svg)
+![Version](https://img.shields.io/badge/Version-1.1.3-green.svg)
 ![License](https://img.shields.io/badge/License-GPL%20v2%2B-orange.svg)
 
 ## 🚀 Features
@@ -162,6 +162,9 @@ GNU General Public License for more details.
 - **Translations**: Contribute translations to make the plugin available in more languages
 
 ## 🎉 Changelog
+
+### Version 1.1.3
+- Shortcuts modal adapts to the site's current background and text colors (including light/dark modes)
 
 ### Version 1.1.2
 - Fix Mac shortcuts not navigating (broken `wp_localize_script` scalar values)
